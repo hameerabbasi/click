@@ -170,6 +170,23 @@ thus distributed under the GNU Lesser General Public License, version
 <http://www.gnu.org/licenses/lgpl.html>. The LGPL specifically permits
 direct linking with code with other licenses.
 
+    elements/adtn/*: This library of Click islicensed under the GNU
+Affero General Public License, version 3. A copy of this license is
+available via the Web at
+<http://www.gnu.org/licenses/agpl-3.0.en.html>, with the following
+additional permission:
+
+    Additional permission under GNU AGPL version 3 section 7
+    
+    If you modify this library, or any covered work, by linking or 
+combining it with the Click software (or a modified version
+of that Program), containing parts covered by the terms of Click
+license, the licensors of this library grant you
+additional permission to convey the resulting work.
+{Corresponding Source for a non-source form of such a combination
+shall include the source code for the parts of the Click software
+used as well as that of the covered work.}
+
     Element code that uses only Click's interfaces will *not* be
 derived from the Linux kernel. (For instance, those interfaces have
 multiple implementations, including some that run at user level.)
