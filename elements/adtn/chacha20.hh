@@ -2,12 +2,13 @@
 #define CLICK_ADTNCHACHA20_HH
 #include <click/element.hh>
 #include <click/glue.hh>
+
 CLICK_DECLS
 
-struct chacha20_key_st {
-    unsigned char rd_key[8];
+struct Chacha20Key {
+public:
+    uint8_t key[8];
 };
-typedef struct chacha20_key_st CHACHA_20_KEY;
 
 class Chacha20 : public Element {
 public:
@@ -27,7 +28,7 @@ public:
 
 private:
     unsigned _op;
-    CHACHA_20_KEY _key;
+    Chacha20Key _key;
 };
 
 CLICK_ENDDECLS
