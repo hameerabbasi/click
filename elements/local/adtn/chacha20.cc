@@ -46,7 +46,7 @@ void Chacha20::push(int port, Packet *p)
 	// If it is the data port:
 	if (port == 0)
 	{
-		void* p_data = p->data();
+		const void* p_data = p->data();
 		uint8_t ad[0];
 		const int adlen = 0;
 
@@ -64,10 +64,10 @@ void Chacha20::push(int port, Packet *p)
 						(void*)formatted_packet->Message_authentication_code,
 						(void*)ad, adlen,
 						(void*)formatted_packet->Initialization_vector,
-						(void*)_key->key
-					) == 0 && clear_packet.Payload_length <= PAYLOAD_PADDING_SIZE);
+						(void*)_key.key
+					) == 0 && clear_packet.Payload_length <= PAYLOAD_PADDING_SIZE)
 			{
-				WritablePacket* p_decrypted = new WritablePacket(clear_packet.Payload_length);
+				WritablePacket* p_decrypted = Packet::make(clear_packet.Payload_length);
 				memcpy(p_decrypted->data(), clear_packet.Payload_Padding, clear_packet.Payload_length);
 
 				output(0).push(p_decrypted);
@@ -88,12 +88,12 @@ void Chacha20::push(int port, Packet *p)
 				uint32_t slen = end_idx - start_idx + 1;
 
 				Chacha20Clear clear_packet;
-				WritablePacket* p_encrypted = new WritablePacket(sizeof(Chacha20Packet));
+				WritablePacket* p_encrypted = Packet::make(sizeof(Chacha20Packet));
 
 				Chacha20Packet* formatted_packet = (Chacha20Packet*) p_encrypted->data();
 				randombytes_buf(formatted_packet->Initialization_vector,
 						sizeof(formatted_packet->Initialization_vector));
-				memcpy(clear_packet.Payload_Padding, p_data + start_idx, slen);
+				memcpy(clear_packet.Payload_Padding, (uint8_t*)p_data + start_idx, slen);
 				clear_packet.Payload_length = slen;
 
 				unsigned long long maclen_p;
@@ -105,7 +105,7 @@ void Chacha20::push(int port, Packet *p)
 						(void*)&clear_packet, ENC_SIZE
 						(void*)ad, adlen, NULL,
 						(void*)formatted_packet->Initialization_vector,
-						(void*)_key->key) == 0)
+						(void*)_key.key) == 0)
 					{
 						output(0).push(p_encrypted);
 					}
@@ -124,7 +124,7 @@ void Chacha20::push(int port, Packet *p)
 		if (p->length() == sizeof(Chacha20Key))
 		{
 			// Just copy the data to the key struct.
-			void* keyFromPacket = p->data();
+			const void* keyFromPacket = p->data();
 			memcpy(&_key, keyFromPacket, sizeof(_key));
 		}
 	}
@@ -133,3 +133,4 @@ void Chacha20::push(int port, Packet *p)
 }
 
 CLICK_ENDDECLS
+EXPORT_ELEMENT(ADTN)
