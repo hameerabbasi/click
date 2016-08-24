@@ -102,7 +102,7 @@ void Chacha20::push(int port, Packet *p)
 						(void*)formatted_packet->Encrypted_segment,
 						(void*)formatted_packet->Message_authentication_code,
 						&maclen_p,
-						(void*)&clear_packet, ENC_SIZE
+						(void*)&clear_packet, ENC_SIZE,
 						(void*)ad, adlen, NULL,
 						(void*)formatted_packet->Initialization_vector,
 						(void*)_key.key) == 0)
