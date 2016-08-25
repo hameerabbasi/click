@@ -1,11 +1,15 @@
 #include <click/config.h>
 #include <click/error.hh>
 #include <click/glue.hh>
+#include <sodium.h>
 #include "chacha20.hh"
 #include "chacha20packet.hh"
 #include "chacha20clear.hh"
 
 CLICK_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 Chacha20::Chacha20()
 	: _op(0)
@@ -30,6 +34,11 @@ Chacha20::configure(Vector<String> &conf, ErrorHandler *errh)
 
     if (dec_int != CHACHA20_DECRYPT && dec_int != CHACHA20_ENCRYPT)
     	return -1;
+
+    int sodiuminit = sodium_init();
+
+    if (sodiuminit != 0 && sodiuminit != 1)
+        return -1;
 
     _op = dec_int;
     return 0;
@@ -58,13 +67,14 @@ void Chacha20::push(int port, Packet *p)
 
 
 			if (crypto_aead_chacha20poly1305_decrypt_detached(
-						(void*)&clear_packet, (void*)NULL,
-						(void*)formatted_packet->Encrypted_segment,
+						(unsigned char*)&clear_packet,
+                                                (unsigned char*)NULL,
+						(unsigned char*)formatted_packet->Encrypted_segment,
 						ENC_SIZE,
-						(void*)formatted_packet->Message_authentication_code,
-						(void*)ad, adlen,
-						(void*)formatted_packet->Initialization_vector,
-						(void*)_key.key
+						(unsigned char*)formatted_packet->Message_authentication_code,
+						(unsigned char*)ad, adlen,
+						(unsigned char*)formatted_packet->Initialization_vector,
+						(unsigned char*)_key.key
 					) == 0 && clear_packet.Payload_length <= PAYLOAD_PADDING_SIZE)
 			{
 				WritablePacket* p_decrypted = Packet::make(clear_packet.Payload_length);
@@ -99,13 +109,13 @@ void Chacha20::push(int port, Packet *p)
 				unsigned long long maclen_p;
 
 				if (crypto_aead_chacha20poly1305_encrypt_detached(
-						(void*)formatted_packet->Encrypted_segment,
-						(void*)formatted_packet->Message_authentication_code,
+						(unsigned char*)formatted_packet->Encrypted_segment,
+						(unsigned char*)formatted_packet->Message_authentication_code,
 						&maclen_p,
-						(void*)&clear_packet, ENC_SIZE,
-						(void*)ad, adlen, NULL,
-						(void*)formatted_packet->Initialization_vector,
-						(void*)_key.key) == 0)
+						(unsigned char*)&clear_packet, ENC_SIZE,
+						(unsigned char*)ad, adlen, NULL,
+						(unsigned char*)formatted_packet->Initialization_vector,
+						(unsigned char*)_key.key) == 0)
 					{
 						output(0).push(p_encrypted);
 					}
@@ -131,6 +141,10 @@ void Chacha20::push(int port, Packet *p)
 
 	p->kill();
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 CLICK_ENDDECLS
 EXPORT_ELEMENT(ADTN)

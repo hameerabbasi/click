@@ -1,0 +1,7 @@
+#!/bin/bash
+
+make clean
+./configure --enable-local
+export CFLAGS=$(pkg-config --cflags libsodium)
+export LDFLAGS=$(pkg-config --libs libsodium)
+make
