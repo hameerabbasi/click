@@ -1,4 +1,5 @@
 #include <click/config.h>
+#include <click/args.hh>
 #include <click/error.hh>
 #include <click/glue.hh>
 #include <sodium.h>
@@ -147,4 +148,4 @@ void Chacha20::push(int port, Packet *p)
 #endif
 
 CLICK_ENDDECLS
-EXPORT_ELEMENT(ADTN)
+EXPORT_ELEMENT(Chacha20)
