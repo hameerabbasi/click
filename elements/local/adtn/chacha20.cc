@@ -149,3 +149,4 @@ void Chacha20::push(int port, Packet *p)
 
 CLICK_ENDDECLS
 EXPORT_ELEMENT(Chacha20)
+ELEMENT_LIBS(`pkg-config --libs libsodium`)
