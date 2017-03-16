@@ -105,6 +105,7 @@ void Chacha20::push(int port, Packet *p)
 				randombytes_buf(formatted_packet->Initialization_vector,
 						sizeof(formatted_packet->Initialization_vector));
 				memcpy(clear_packet.Payload_Padding, (uint8_t*)p_data + start_idx, slen);
+				memset(clear_packet.Payload_Padding + slen, 0, segment_size - slen);
 				clear_packet.Payload_length = slen;
 
 				unsigned long long maclen_p;
